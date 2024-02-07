@@ -1,0 +1,5 @@
+.vscode/**
+.vscode
+*.db
+*.session.sql
+Gemfile.lock
