@@ -1,4 +1,3 @@
-
 class DatabaseObject
     def initialize(options)
         options.each do |k, v|
