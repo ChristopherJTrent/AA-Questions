@@ -9,6 +9,15 @@ class Question < DatabaseObject
         questions.map { |row| Question.new(row)}
     end
 
+    def self.find_by_author_id(author_id)
+        result = DBConnector.instance.execute(<<-SQL, author_id)
+            SELECT *
+            FROM questions
+            WHERE author_id = ?
+        SQL
+        result.map {|row| Question.new(row)}
+    end
+
     def self.find_by_id(id) #an integer & found is an array containing a hash result.
         found = DBConnector.instance.execute(<<-SQL, id: id)
             SELECT *
@@ -18,7 +27,8 @@ class Question < DatabaseObject
         Question.new(found.first)
     end
 
+
+
 end
 
 
-p Question.find_by_id(1)

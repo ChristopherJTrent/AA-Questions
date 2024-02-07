@@ -10,6 +10,24 @@ class Reply < DatabaseObject
         rows.map { |row| self.new(row)}
     end
 
+    def self.find_by_user_id(id)
+        rows = DBConnector.instance.execute(<<-SQL, id)
+            SELECT *
+            FROM replies
+            WHERE author_id = ?
+        SQL
+        rows.map {|row| Reply.new(row)}
+    end
+
+    def self.find_by_question_id(id)
+        rows = DBConnector.instance.execute(<<-SQL, id)
+            SELECT *
+            FROM replies
+            WHERE question_id = ?
+        SQL
+        rows.map {|row| Reply.new(row)}
+    end
+
     def self.find_by_id(id) #an integer & found is an array containing a hash result.
         found = DBConnector.instance.execute(<<-SQL, id: id)
             SELECT *
@@ -20,4 +38,4 @@ class Reply < DatabaseObject
     end
 end
 
-p Reply.all
+p Reply.find_by_question_id(3)
