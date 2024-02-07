@@ -1,24 +1,23 @@
 require_relative 'database_connector'
 require_relative 'database_object'
-class Question < DatabaseObject
+
+class User < DatabaseObject
     def self.all
-        questions = DBConnector.instance.execute(<<-SQL)
+        rows = DBConnector.instance.execute(<<-SQL)
             SELECT *
-            FROM questions
+            FROM users
         SQL
-        questions.map { |row| Question.new(row)}
+        rows.map{|row| User.new(row)}
     end
 
     def self.find_by_id(id) #an integer & found is an array containing a hash result.
         found = DBConnector.instance.execute(<<-SQL, id: id)
             SELECT *
-            FROM questions
-            WHERE questions.id = :id
+            FROM users
+            WHERE users.id = :id
         SQL
-        Question.new(found.first)
+        User.new(found.first)
     end
-
 end
-
-
-p Question.find_by_id(1)
+p User.all
+p User.find_by_id(1)
