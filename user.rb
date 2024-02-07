@@ -21,3 +21,4 @@ class User < DatabaseObject
 end
 p User.all
 p User.find_by_id(1)
+p User.find_by_id(1).fname
