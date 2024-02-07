@@ -46,6 +46,12 @@ class Question < DatabaseObject
     def followers
         QuestionFollow.followers_for_question_id(id)
     end
+    def likers
+        QuestionLikes.likers_for_question_id(id)
+    end
+    def num_likes
+        QuestionLikes.num_likes_for_question_id(id)
+    end
 
     def save
         unless id

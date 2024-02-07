@@ -3,6 +3,7 @@ require_relative 'database_object'
 require_relative 'question'
 require_relative 'reply'
 require_relative 'question_follow'
+require_relative 'question_likes'
 
 class User < DatabaseObject
     def self.all
@@ -41,6 +42,9 @@ class User < DatabaseObject
     def followed_questions
         QuestionFollow.followed_questions_for_user_id(id)
     end
+    def liked_questions
+        QuestionLikes.liked_questions_for_user_id(id)
+    end 
 
     def average_karma
         rows = DBConnector.instance.execute(<<-SQL, id)
