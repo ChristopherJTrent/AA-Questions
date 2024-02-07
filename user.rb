@@ -41,9 +41,39 @@ class User < DatabaseObject
     def followed_questions
         QuestionFollow.followed_questions_for_user_id(id)
     end
+
+    def average_karma
+        rows = DBConnector.instance.execute(<<-SQL, id)
+            SELECT COUNT(question_likes.id) / CAST (COUNT(DISTINCT(questions.id)) AS FLOAT) AS avg_likes
+            FROM question_likes
+            LEFT OUTER JOIN questions ON question_id = questions.id
+            GROUP BY questions.id
+            HAVING questions.author_id = ?
+        SQL
+        rows.first['avg_likes']
+    end
+
+    def save
+        unless id
+            DBConnector.instance.execute(<<-SQL, fname, lname)
+                INSERT INTO users (fname, lname)
+                VALUES (?,?)
+            SQL
+            @id = DBConnector.instance.last_insert_row_id
+        else
+            DBConnector.instance.execute(<<-SQL, fname, lname, id)
+                UPDATE users
+                SET fname = ?, lname = ?
+                WHERE id = ?
+            SQL
+        end
+    end
 end
 if __FILE__ == $PROGRAM_NAME
     p User.find_by_name('Kush', 'Patel').first.authored_questions
     p User.find_by_name('Kush', 'Patel').first.authored_replies
     p User.find_by_name('Kush', 'Patel').first.followed_questions
+    p User.find_by_name('Earl', 'Cat').first.average_karma
+    User.new({'fname' => 'Andrea', 'lname' => 'Cheung'}).save
+    p User.find_by_name('Andrea', 'Cheung')
 end

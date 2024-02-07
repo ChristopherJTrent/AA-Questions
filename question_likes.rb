@@ -30,6 +30,18 @@ class QuestionLikes < DatabaseObject
         SQL
         rows.map {|row| Question.new(row)}
     end
+
+    def self.most_liked_questions(n)
+        rows =DBConnector.instance.execute(<<-SQL, n)
+            SELECT questions.id AS id, COUNT(question_likes.id) AS num_likes
+            FROM questions
+            JOIN question_likes ON questions.id = question_likes.question_id
+            GROUP BY questions.id
+            ORDER BY num_likes
+            LIMIT ?
+        SQL
+        rows.map {|row| Question.find_by_id(row['id'])}
+    end
 end
 
 if __FILE__ == $PROGRAM_NAME

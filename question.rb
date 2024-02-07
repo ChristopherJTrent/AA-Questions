@@ -2,6 +2,8 @@ require_relative 'database_connector'
 require_relative 'database_object'
 require_relative 'user'
 require_relative 'reply'
+require_relative 'question_likes'
+
 class Question < DatabaseObject
     def self.all
         questions = DBConnector.instance.execute(<<-SQL)
@@ -29,6 +31,10 @@ class Question < DatabaseObject
         Question.new(found.first)
     end
 
+    def self.most_liked(n)
+        QuestionLikes.most_liked_questions(n)
+    end
+
     def author
         User.find_by_id(author_id)
     end
@@ -41,6 +47,21 @@ class Question < DatabaseObject
         QuestionFollow.followers_for_question_id(id)
     end
 
+    def save
+        unless id
+            DBConnector.instance.execute(<<-SQL, title, body, author_id)
+                INSERT INTO users (title, body, author_id)
+                VALUES (?, ?, ?)
+            SQL
+            @id = DBConnector.instance.last_insert_row_id
+        else
+            DBConnector.instance.execute(<<-SQL, title, body, author_id, id)
+                UPDATE users
+                SET title = ?, body = ?, author_id = ?
+                WHERE id = ?
+            SQL
+        end
+    end
 end
 
 if __FILE__ == $PROGRAM_NAME
