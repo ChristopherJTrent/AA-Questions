@@ -2,6 +2,7 @@ require_relative 'database_connector'
 require_relative 'database_object'
 require_relative 'question'
 require_relative 'reply'
+require_relative 'question_follow'
 
 class User < DatabaseObject
     def self.all
@@ -36,8 +37,13 @@ class User < DatabaseObject
     def authored_replies
         Reply.find_by_user_id(id)
     end 
+
+    def followed_questions
+        QuestionFollow.followed_questions_for_user_id(id)
+    end
 end
 if __FILE__ == $PROGRAM_NAME
     p User.find_by_name('Kush', 'Patel').first.authored_questions
     p User.find_by_name('Kush', 'Patel').first.authored_replies
+    p User.find_by_name('Kush', 'Patel').first.followed_questions
 end

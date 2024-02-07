@@ -32,8 +32,13 @@ class Question < DatabaseObject
     def author
         User.find_by_id(author_id)
     end
+
     def replies
         Reply.find_by_question_id(id)
+    end
+
+    def followers
+        QuestionFollow.followers_for_question_id(id)
     end
 
 end
@@ -41,4 +46,5 @@ end
 if __FILE__ == $PROGRAM_NAME
     p Question.find_by_id(1).author
     p Question.find_by_id(3).replies
+    p Question.find_by_id(3).followers
 end
