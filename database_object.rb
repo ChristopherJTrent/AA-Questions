@@ -27,4 +27,22 @@ class DatabaseObject
             SQL
         end
     end
+    def where(constraints)
+        where_statement = constraints.map{|k,v| "#{k.to_s} = #{v}"}.join(" AND ")
+        rows = DBConnector.instance.execute(<<-SQL)
+            SELECT *
+            FROM #{tableize(self.class.name)}
+            WHERE #{where_statement};
+        SQL
+        rows.map{|row| self.class.new(row)}
+    end
+    def find_by(**constraints)
+        where_statement = constraints.map{|k, v| "#{k.to_s} = #{v}"}.join(" AND ")
+        rows = DBConnector.instance.execute(<<-SQL)
+            SELECT *
+            FROM #{tableize(self.class.name)}
+            WHERE #{where_statement};
+        SQL
+        rows.map{|row| self.class.new(row)}
+    end
 end
