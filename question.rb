@@ -52,22 +52,6 @@ class Question < DatabaseObject
     def num_likes
         QuestionLikes.num_likes_for_question_id(id)
     end
-
-    def save
-        unless id
-            DBConnector.instance.execute(<<-SQL, title, body, author_id)
-                INSERT INTO users (title, body, author_id)
-                VALUES (?, ?, ?)
-            SQL
-            @id = DBConnector.instance.last_insert_row_id
-        else
-            DBConnector.instance.execute(<<-SQL, title, body, author_id, id)
-                UPDATE users
-                SET title = ?, body = ?, author_id = ?
-                WHERE id = ?
-            SQL
-        end
-    end
 end
 
 if __FILE__ == $PROGRAM_NAME

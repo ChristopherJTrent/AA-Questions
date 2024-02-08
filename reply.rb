@@ -57,22 +57,6 @@ class Reply < DatabaseObject
     def parent_reply
         Reply.find_by_id(parent_reply_id)
     end
-
-    def save
-        unless id
-            DBConnector.instance.execute(<<-SQL, question_id, parent_reply_id, author_id, body)
-                INSERT INTO users (question_id, parent_reply_id, author_id, body)
-                VALUES (?, ?, ?, ?)
-            SQL
-            @id = DBConnector.instance.last_insert_row_id
-        else
-            DBConnector.instance.execute(<<-SQL, question_id, parent_reply_id, author_id, body, id)
-                UPDATE users
-                SET question_id = ?, parent_reply_id = ?, author_id = ?, body = ?
-                WHERE id = ?
-            SQL
-        end
-    end
 end
 if __FILE__ == $PROGRAM_NAME
     p Reply.find_by_id(1).child_replies

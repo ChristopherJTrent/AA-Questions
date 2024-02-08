@@ -56,22 +56,6 @@ class User < DatabaseObject
         SQL
         rows.first['avg_likes']
     end
-
-    def save
-        unless id
-            DBConnector.instance.execute(<<-SQL, fname, lname)
-                INSERT INTO users (fname, lname)
-                VALUES (?,?)
-            SQL
-            @id = DBConnector.instance.last_insert_row_id
-        else
-            DBConnector.instance.execute(<<-SQL, fname, lname, id)
-                UPDATE users
-                SET fname = ?, lname = ?
-                WHERE id = ?
-            SQL
-        end
-    end
 end
 if __FILE__ == $PROGRAM_NAME
     p User.find_by_name('Kush', 'Patel').first.authored_questions
